@@ -2,18 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title> YuntechEat </title>
-    <?php
+  <meta charset="UTF-8">
+  <title> YuntechEat </title>
+  <?php
     $conn = new mysqli("localhost", "root", "", "deliverysystem") or die("連接失敗");
     ?>
 </head>
 
 <body>
-    <h1>YuntechEat 餐廳管理頁面</h1>
-    <label>請選擇餐廳編號
-        <select name="month">
-            <?php
+  <h1>YuntechEat 餐廳管理頁面</h1>
+  <label>請選擇餐廳編號
+    <select name="month">
+      <?php
             $link = mysqli_connect("localhost","root",
             "","deliverysystem")
                 or die("連線失敗!<br>");
@@ -25,7 +25,7 @@
             }	
 		
 	?>
-        </select>
+    </select>
 
 </body>
 
