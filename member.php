@@ -33,6 +33,7 @@
       $email = $_GET["email"];
       $birthday = $_GET["birthday"];
       // update code in here;
+      // header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       header("Location: member.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isDelete = isset($_GET["delete"]);
@@ -42,11 +43,11 @@
       header("Location: member.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     if ($isCreate) {
-      $account = $_GET["account"];
-      $name = $_GET["name"];
-      $gender = $_GET["gender"];
-      $email = $_GET["email"];
-      $birthday = $_GET["birthday"];
+      $account = $_GET["accountAdd"];
+      $name = $_GET["nameAdd"];
+      $gender = $_GET["genderAdd"];
+      $email = $_GET["emailAdd"];
+      $birthday = $_GET["birthdayAdd"];
       // create code in here;
       header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
     }
@@ -58,20 +59,33 @@
         switch ($_GET["msg"]) {
           case 0:
             $msg = "編輯成功";
+            echo '<div class="alert alert-success" style="width: 100%;" role="alert">
+                '.$msg.'
+              </div>';
             break;
           case 1:
             $msg = "刪除成功";
+            echo '<div class="alert alert-success" style="width: 100%;" role="alert">
+                '.$msg.'
+              </div>';
             break;
           case 2:
             $msg = "新增成功";
+            echo '<div class="alert alert-success" style="width: 100%;" role="alert">
+                '.$msg.'
+              </div>';
+            break;
+          case -1:
+            $msg = "錯誤操作";
+            echo '<div class="alert alert-danger" style="width: 100%;" role="alert">
+                '.$msg.'
+              </div>';
             break;
           default:
             # code...
             break;
         }
-        echo '<div class="alert alert-success" style="width: 100%;" role="alert">
-                '.$msg.'
-              </div>';
+        
       }
     ?>
     <form class="form-inline" action="member.php" method="GET">
@@ -119,10 +133,11 @@
             mysqli_set_charset($link, "utf8");
             $result = mysqli_query($link, $sql);
             if (mysqli_num_rows($result) == 0) {
-              echo '<tr><td class="align-middle text-center" colspan="8">查無結果</td></tr>';
+              echo '<tr><td class="align-middle text-center" colspan="8">查無結果</td></tr>';  //欄位數
             } else {
               while($row = mysqli_fetch_assoc($result)) {
                 if ($isEdit && $editID == $row["memberID"]) {
+                  //編輯中
                   echo '<tr>
                     <th class="align-middle text-center" scope="row">'.$row["memberID"].'</th>
                     <td class="align-middle text-center">
@@ -150,6 +165,7 @@
                     </td>
                   </tr>';
                 } else {
+                  //一般資訊
                   echo '<tr>
                     <th class="align-middle text-center" scope="row">'.$row["memberID"].'</th>
                     <td class="align-middle text-center">'.$row["account"].'</td>
@@ -173,24 +189,25 @@
             }
           ?>
           <tr>
+            <!-- 新增欄位 -->
             <th class="align-middle text-center" scope="row">+</th>
             <td class="align-middle text-center">
-              <input name="account" type="text" class="form-control form-control-sm" style="width: 120px;">
+              <input name="accountAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
             </td>
             <td class="align-middle text-center">
-              <input name="name" type="text" class="form-control form-control-sm" style="width: 120px;">
+              <input name="nameAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
             </td>
             <td class="align-middle text-center">
-              <select class="form-control form-control-sm" name="gender">
+              <select class="form-control form-control-sm" name="genderAdd">
                 <option value="1">男</option>
                 <option value="0">女</option>
               </select>
             </td>
             <td class="align-middle text-center">
-              <input name="birthday" type="text" class="form-control form-control-sm" style="width: 120px;">
+              <input name="birthdayAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
             </td>
             <td class="align-middle text-center">
-              <input name="email" type="text" class="form-control form-control-sm" style="width: 180px;">
+              <input name="emailAdd" type="text" class="form-control form-control-sm" style="width: 180px;">
             </td>
             <td class="align-middle text-center" colspan="2">
               <button class="btn btn-info btn-sm btn-block" type="submit" name="create">
