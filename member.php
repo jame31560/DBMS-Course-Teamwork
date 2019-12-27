@@ -27,12 +27,24 @@
     $isUpdate = isset($_GET["update"]);
     if ($isUpdate) {
       $memberID = $_GET["update"]; // update this on where
+      echo $memberID;
       $account = $_GET["account"];
       $name = $_GET["name"];
       $gender = $_GET["gender"];
+      echo $gender;
       $email = $_GET["email"];
-      $birthday = $_GET["birthday"];
+      $birthday = $_GET["birthday"];  
       // update code in here;
+      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      $sql = "UPDATE member SET account = '".$account."' , name = '".$name."' , gender = '".$gender."' , email = '".$email."' , birthday = '".$birthday."' WHERE memberID = '".$memberID."'";
+      // $sql = "SELECT * FROM member";
+      mysqli_set_charset($link, "utf8");
+      try{
+        mysqli_query($link, $sql);
+      }catch(Exception $e){
+        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+      }
+      mysqli_close($link);
       // header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       header("Location: member.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
     }
@@ -40,16 +52,41 @@
     if ($isDelete) {
       $memberID = $_GET["delete"];
       // delete code in here
+      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $sql = "DELETE FROM member WHERE memberID = '".$memberID."'";
+      try{
+        mysqli_query($link, $sql);
+      }catch(Exception $e){
+        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+      } 
       header("Location: member.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
+    $isCreate = isset($_GET["create"]);
+    echo $isCreate;
     if ($isCreate) {
       $account = $_GET["accountAdd"];
       $name = $_GET["nameAdd"];
+      echo $name;
       $gender = $_GET["genderAdd"];
       $email = $_GET["emailAdd"];
       $birthday = $_GET["birthdayAdd"];
+      echo $account;
+      $password_len = 6;
+      $password = '';
+      $word = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      $len = strlen($word);
+      for ($i = 0; $i < $password_len; $i++) {
+        $password .= $word[rand() % $len];
+      }
       // create code in here;
-      header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
+      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $sql = "INSERT INTO member VALUES(NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
+      try{
+        mysqli_query($link, $sql);
+      }catch(Exception $e){
+        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+      } 
+      // header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 會員管理頁面</h1>
@@ -78,6 +115,12 @@
             break;
           case -1:
             $msg = "錯誤操作";
+            echo '<div class="alert alert-danger" style="width: 100%;" role="alert">
+                '.$msg.'
+              </div>';
+            break;
+          case -2:
+            $msg = "無法連接資料庫";
             echo '<div class="alert alert-danger" style="width: 100%;" role="alert">
                 '.$msg.'
               </div>';
