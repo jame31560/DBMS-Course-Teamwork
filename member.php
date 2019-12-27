@@ -143,12 +143,11 @@
                     <td class="align-middle text-center">
                       <input name="email" type="text" class="form-control form-control-sm" style="width: 180px;" value="'.$row["email"].'">
                     </td>
-                    <td class="align-middle text-center">
-                      <button class="btn btn-warning btn-sm" type="submit" name="update" value="'.$row["memberID"].'">
+                    <td class="align-middle text-center" colspan="2">
+                      <button class="btn btn-success btn-sm btn-block" type="submit" name="update" value="'.$row["memberID"].'">
                         送出
                       </button>
                     </td>
-                    <td class="align-middle text-center"></td>
                   </tr>';
                 } else {
                   echo '<tr>
@@ -159,12 +158,12 @@
                     <td class="align-middle text-center">'.$row["birthday"].'</td>
                     <td class="align-middle text-center">'.$row["email"].'</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-warning btn-sm" type="submit" name="edit" value="'.$row["memberID"].'">
+                      <button class="btn btn-warning btn-sm btn-block" type="submit" name="edit" value="'.$row["memberID"].'">
                         編輯
                       </button>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="'.$row["memberID"].'">
+                      <button class="btn btn-danger btn-sm btn-block" type="submit" name="delete" value="'.$row["memberID"].'">
                         刪除
                       </button>
                     </td>
@@ -193,12 +192,11 @@
             <td class="align-middle text-center">
               <input name="email" type="text" class="form-control form-control-sm" style="width: 180px;">
             </td>
-            <td class="align-middle text-center">
-              <button class="btn btn-warning btn-sm" type="submit" name="create">
+            <td class="align-middle text-center" colspan="2">
+              <button class="btn btn-info btn-sm btn-block" type="submit" name="create">
                 新增
               </button>
             </td>
-            <td class="align-middle text-center"></td>
           </tr>
         </tbody>
       </table>
