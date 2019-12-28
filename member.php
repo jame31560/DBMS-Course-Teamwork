@@ -86,7 +86,7 @@
       }catch(Exception $e){
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      // header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 會員管理頁面</h1>

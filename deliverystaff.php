@@ -69,7 +69,7 @@
       }catch(Exception $e){
         header("Location: deliverystaff.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      // header("Location: deliverystaff.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: deliverystaff.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 外送員管理頁面</h1>
@@ -118,7 +118,7 @@
     <form class="form-inline" action="deliverystaff.php" method="GET">
       <div class="form-group mx-sm-3 mb-2">
         <label for="inputquery" class="sr-only">Account</label>
-        <input name="query" type="text" class="form-control" id="inputquery" placeholder="外送員ID" required
+        <input name="query" type="text" class="form-control" id="inputquery" placeholder="外送員名字" required
                value="<?php echo (($isQuery)?$_GET["query"]:"") ?>">
       </div>
       <button type="submit" class="btn btn-primary mb-2 mr-2">查詢</button>
@@ -150,7 +150,7 @@
           <?php
             $link = mysqli_connect("localhost","root", "","deliverysystem") or die("連線失敗!<br>");
             if ($isQuery) {
-              $sql = "SELECT * FROM deliverystaff WHERE deliveryStaffID LIKE '%".$_GET["query"]."%'";
+              $sql = "SELECT * FROM deliverystaff WHERE name LIKE '%".$_GET["query"]."%'";
             } else {
               $sql = "SELECT * FROM deliverystaff";
             }
