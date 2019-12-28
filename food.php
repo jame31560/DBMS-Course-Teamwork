@@ -60,6 +60,7 @@
       // delete code in here
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
         header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      mysqli_set_charset($link, "utf8");
       $sql = "DELETE FROM food WHERE restaurantID = ".$deleteRestaurantID." AND foodID = ".$deleteFoodID.";";
       try{
         mysqli_query($link, $sql);
@@ -70,22 +71,30 @@
     }
     $isCreate = isset($_GET["create"]);
     if ($isCreate) {
-      $account = $_GET["accountAdd"];
-      $name = $_GET["nameAdd"];
-      $gender = $_GET["genderAdd"];
-      $email = $_GET["emailAdd"];
-      $birthday = $_GET["birthdayAdd"];
-      // create code in here;
+      $restaurant = $_GET["restaurantAdd"];
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
-        header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
-      $sql = "INSERT INTO member VALUES(
-        NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
+        header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      mysqli_set_charset($link, "utf8");
+      $sql = 'SELECT MAX(foodID) AS foodID FROM `food` WHERE restaurantID = '.$restaurant.' GROUP BY restaurantID';
+      try{
+        $result = mysqli_query($link, $sql);
+      }catch(Exception $e){
+        header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+      }
+      $foodID = (int)mysqli_fetch_assoc($result)["foodID"] + 1;
+      $foodName = $_GET["foodNameAdd"];
+      $price = $_GET["priceAdd"];
+      $imageURL = $_GET["imageURLAdd"];
+      $description = $_GET["descriptionAdd"];
+      // create code in here;
+      $sql = "INSERT INTO food VALUES(
+        '".$restaurant."','".$foodID."','".$foodName."','".$price."','".$imageURL."','".$description."');";
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
         header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      header("Location: food.php?msg=2&password=".$password.(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: food.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 食物管理頁面</h1>
