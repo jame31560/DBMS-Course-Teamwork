@@ -58,7 +58,6 @@
       header("Location: restaurant.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isCreate = isset($_GET["create"]);
-    echo $isCreate;
     if ($isCreate) {
       $name = $_GET["nameAdd"];
       $tel = $_GET["telAdd"];
@@ -141,12 +140,14 @@
       <table class="table table-striped table-hover table-sm">
         <thead>
           <tr>
+            <th class="align-middle text-center" scope="col">#</th>
+            <th class="align-middle text-center" scope="col">餐廳名稱</th>
+            <th class="align-middle text-center" scope="col">餐廳電話</th>
             <th class="align-middle text-center" scope="col">編號</th>
             <th class="align-middle text-center" scope="col">名稱</th>
-            <th class="align-middle text-center" scope="col">電話</th>
-            <th class="align-middle text-center" scope="col">地址</th>
-            <th class="align-middle text-center" scope="col">編輯</th>
-            <th class="align-middle text-center" scope="col">刪除</th>
+            <th class="align-middle text-center" scope="col">價格</th>
+            <th class="align-middle text-center" scope="col">圖片網址</th>
+            <th class="align-middle text-center" scope="col">敘述</th>
           </tr>
         </thead>
         <tbody>

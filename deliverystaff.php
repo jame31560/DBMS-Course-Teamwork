@@ -58,7 +58,6 @@
       header("Location: deliverystaff.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isCreate = isset($_GET["create"]);
-    echo $isCreate;
     if ($isCreate) {
       $name = $_GET["nameAdd"];
       $tel = $_GET["telAdd"];

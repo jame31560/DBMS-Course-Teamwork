@@ -28,11 +28,9 @@
     $isUpdate = isset($_GET["update"]);
     if ($isUpdate) {
       $memberID = $_GET["update"]; // update this on where
-      echo $memberID;
       $account = $_GET["account"];
       $name = $_GET["name"];
       $gender = $_GET["gender"];
-      echo $gender;
       $email = $_GET["email"];
       $birthday = $_GET["birthday"];  
       // update code in here;
@@ -67,15 +65,12 @@
       header("Location: member.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isCreate = isset($_GET["create"]);
-    echo $isCreate;
     if ($isCreate) {
       $account = $_GET["accountAdd"];
       $name = $_GET["nameAdd"];
-      echo $name;
       $gender = $_GET["genderAdd"];
       $email = $_GET["emailAdd"];
       $birthday = $_GET["birthdayAdd"];
-      echo $account;
       $password_len = 6;
       $password = '';
       $word = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
