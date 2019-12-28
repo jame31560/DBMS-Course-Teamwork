@@ -39,7 +39,6 @@
       $sql = "UPDATE member SET account = '".$account."
         ' , name = '".$name."' , gender = '".$gender."' , email = '".$email."' , birthday = '".$birthday."
         ' WHERE memberID = '".$memberID."'";
-      // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
       try{
         mysqli_query($link, $sql);
@@ -47,7 +46,6 @@
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       }
       mysqli_close($link);
-      // header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       header("Location: member.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isDelete = isset($_GET["delete"]);
@@ -134,10 +132,10 @@
         
       }
     ?>
-    <form class="form-inline" action="member.php" method="GET">
+    <form class="form-inline" action="food.php" method="GET">
       <div class="form-group mx-sm-3 mb-2">
         <label for="inputquery" class="sr-only">Account</label>
-        <input name="query" type="text" class="form-control" id="inputquery" placeholder="帳號" required
+        <input name="query" type="text" class="form-control" id="inputquery" placeholder="餐點名稱" required
                value="<?php echo (($isQuery)?$_GET["query"]:"") ?>">
       </div>
       <button type="submit" class="btn btn-primary mb-2 mr-2">查詢</button>
@@ -148,7 +146,7 @@
     ?>
     </form>
 
-    <form class="form-inline" action="member.php" method="GET">
+    <form class="form-inline" action="food.php" method="GET">
       <?php
         if ($isQuery) {
           echo '<input name="query" type="text" class="form-control d-none" value="'.$_GET["query"].'">';
@@ -158,12 +156,14 @@
       <table class="table table-striped table-hover table-sm">
         <thead>
           <tr>
+            <th class="align-middle text-center" scope="col">#</th>
+            <th class="align-middle text-center" scope="col">餐廳</th>
+            <th class="align-middle text-center" scope="col">餐廳電話</th>
             <th class="align-middle text-center" scope="col">編號</th>
-            <th class="align-middle text-center" scope="col">帳號</th>
-            <th class="align-middle text-center" scope="col">姓名</th>
-            <th class="align-middle text-center" scope="col">性別</th>
-            <th class="align-middle text-center" scope="col">生日</th>
-            <th class="align-middle text-center" scope="col">信箱</th>
+            <th class="align-middle text-center" scope="col">餐點</th>
+            <th class="align-middle text-center" scope="col">價格</th>
+            <th class="align-middle text-center" scope="col">圖片</th>
+            <th class="align-middle text-center" scope="col">敘述</th>
             <th class="align-middle text-center" scope="col">編輯</th>
             <th class="align-middle text-center" scope="col">刪除</th>
           </tr>
@@ -172,37 +172,57 @@
           <?php
             $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die("連線失敗!<br>");
             if ($isQuery) {
-              $sql = "SELECT * FROM member WHERE account LIKE '%".$_GET["query"]."%'";
+              $sql = "SELECT a.restaurantID AS restaurantID,
+                             a.foodID AS foodID,
+                             a.name AS foodName,
+                             a.price AS price,
+                             a.imageURL AS imageURL,
+                             a.description AS description,
+                             b.name AS restaurantName,
+                             b.tel AS tel
+                      FROM food AS a
+                      JOIN restaurant AS b
+                      ON a.restaurantID = b.restaurantID
+                      WHERE a.name LIKE '%".$_GET["query"]."%'";
             } else {
-              $sql = "SELECT * FROM member";
+              $sql = "SELECT a.restaurantID AS restaurantID,
+                             a.foodID AS foodID,
+                             a.name AS foodName,
+                             a.price AS price,
+                             a.imageURL AS imageURL,
+                             a.description AS description,
+                             b.name AS restaurantName,
+                             b.tel AS tel
+                      FROM food AS a
+                      JOIN restaurant AS b
+                      ON a.restaurantID = b.restaurantID";
             }
             mysqli_set_charset($link, "utf8");
             $result = mysqli_query($link, $sql);
             if (mysqli_num_rows($result) == 0) {
-              echo '<tr><td class="align-middle text-center" colspan="8">查無結果</td></tr>';  //欄位數
+              echo '<tr><td class="align-middle text-center" colspan="10">查無結果</td></tr>';  //欄位數
             } else {
+              $count = 0;
               while($row = mysqli_fetch_assoc($result)) {
-                if ($isEdit && $editID == $row["memberID"]) {
+                $count += 1;
+                if ($isEdit && $editRestaurantID == $row["restaurantNameID"] && $editFoodID == $row["foodID"]) {
                   //編輯中
                   echo '<tr>
-                    <th class="align-middle text-center" scope="row">'.$row["memberID"].'</th>
+                    <th class="align-middle text-center" scope="row">'.$count.'</th>
+                    <td class="align-middle text-center">'.$row["restaurantName"].'</td>
+                    <td class="align-middle text-center">'.$row["tel"].'</td>
+                    <td class="align-middle text-center">'.$row["foodID"].'</td>
                     <td class="align-middle text-center">
-                      <input name="account" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["account"].'">
+                      <input name="foodName" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["foodName"].'">
                     </td>
                     <td class="align-middle text-center">
-                      <input name="name" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["name"].'">
+                      <input name="price" type="number" class="form-control form-control-sm" style="width: 70px;" value="'.$row["price"].'">
                     </td>
                     <td class="align-middle text-center">
-                      <select class="form-control form-control-sm" name="gender">
-                        <option value="1"'.(($row["gender"] == 1)?"selected":"").'>男</option>
-                        <option value="0"'.(($row["gender"] == 0)?"selected":"").'>女</option>
-                      </select>
+                      <input name="imageURL" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["imageURL"].'">
                     </td>
                     <td class="align-middle text-center">
-                      <input name="birthday" type="date" class="form-control form-control-sm" style="width: 145px;" value="'.$row["birthday"].'">
-                    </td>
-                    <td class="align-middle text-center">
-                      <input name="email" type="email" class="form-control form-control-sm" style="width: 180px;" value="'.$row["email"].'">
+                      <input name="description" type="text" class="form-control form-control-sm" style="width: 160px;" value="'.$row["description"].'">
                     </td>
                     <td class="align-middle text-center" colspan="2">
                       <button class="btn btn-success btn-sm btn-block" type="submit" name="update" value="'.$row["memberID"].'">
@@ -213,19 +233,21 @@
                 } else {
                   //一般資訊
                   echo '<tr>
-                    <th class="align-middle text-center" scope="row">'.$row["memberID"].'</th>
-                    <td class="align-middle text-center">'.$row["account"].'</td>
-                    <td class="align-middle text-center">'.$row["name"].'</td>
-                    <td class="align-middle text-center">'.(($row["gender"] == 1)?"男":"女").'</td>
-                    <td class="align-middle text-center">'.$row["birthday"].'</td>
-                    <td class="align-middle text-center">'.$row["email"].'</td>
+                    <th class="align-middle text-center" scope="row">'.$count.'</th>
+                    <td class="align-middle text-center">'.$row["restaurantName"].'</td>
+                    <td class="align-middle text-center">'.$row["tel"].'</td>
+                    <td class="align-middle text-center">'.$row["foodID"].'</td>
+                    <td class="align-middle text-center">'.$row["foodName"].'</td>
+                    <td class="align-middle text-center">'.$row["price"].'</td>
+                    <td class="align-middle text-center">'.$row["imageURL"].'</td>
+                    <td class="align-middle text-center">'.$row["description"].'</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-warning btn-sm btn-block" type="submit" name="edit" value="'.$row["memberID"].'">
+                      <button class="btn btn-warning btn-sm btn-block" type="submit" name="edit" value="['.$row["restaurantID"].','.$row["foodID"].']">
                         編輯
                       </button>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-danger btn-sm btn-block" type="submit" name="delete" value="'.$row["memberID"].'">
+                      <button class="btn btn-danger btn-sm btn-block" type="submit" name="delete" value="['.$row["restaurantID"].','.$row["foodID"].']">
                         刪除
                       </button>
                     </td>
@@ -238,22 +260,24 @@
             <!-- 新增欄位 -->
             <th class="align-middle text-center" scope="row">+</th>
             <td class="align-middle text-center">
-              <input name="accountAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
-            </td>
-            <td class="align-middle text-center">
-              <input name="nameAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
-            </td>
-            <td class="align-middle text-center">
-              <select class="form-control form-control-sm" name="genderAdd">
+              <select class="form-control form-control-sm" name="restaurantAdd">
                 <option value="1">男</option>
                 <option value="0">女</option>
               </select>
             </td>
+            <td class="align-middle text-center"></td>
+            <td class="align-middle text-center"></td>
             <td class="align-middle text-center">
-              <input name="birthdayAdd" type="date" class="form-control form-control-sm" style="width: 145px;">
+              <input name="foodNameAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
             </td>
             <td class="align-middle text-center">
-              <input name="emailAdd" type="email" class="form-control form-control-sm" style="width: 180px;">
+              <input name="priceAdd" type="number" class="form-control form-control-sm" style="width: 70px;">
+            </td>
+            <td class="align-middle text-center">
+              <input name="imageURLAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
+            </td>
+            <td class="align-middle text-center">
+              <input name="descriptionAdd" type="text" class="form-control form-control-sm" style="width: 160px;">
             </td>
             <td class="align-middle text-center" colspan="2">
               <button class="btn btn-info btn-sm btn-block" type="submit" name="create">
