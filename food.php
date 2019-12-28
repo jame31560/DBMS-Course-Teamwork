@@ -23,44 +23,48 @@
     $isEdit = isset($_GET["edit"]);
     $isCreate = isset($_GET["create"]);
     if ($isEdit) {
-      $editID = $_GET["edit"];
+      $editID = explode(",", $_GET["edit"]);
+      $editRestaurantID = (int)$editID[0];
+      $editFoodID = (int)$editID[1];
     }
     $isUpdate = isset($_GET["update"]);
     if ($isUpdate) {
-      $memberID = $_GET["update"]; // update this on where
-      $account = $_GET["account"];
-      $name = $_GET["name"];
-      $gender = $_GET["gender"];
-      $email = $_GET["email"];
-      $birthday = $_GET["birthday"];  
+      $editID = explode(",", $_GET["update"]);
+      $editRestaurantID = (int)$editID[0];
+      $editFoodID = (int)$editID[1];
+      $foodName = $_GET["foodName"]; // update this on where
+      $price = $_GET["price"];
+      $imageURL = $_GET["imageURL"];
+      $description = $_GET["description"];  
       // update code in here;
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
-        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
-      $sql = "UPDATE member SET account = '".$account."
-        ' , name = '".$name."' , gender = '".$gender."' , email = '".$email."' , birthday = '".$birthday."
-        ' WHERE memberID = '".$memberID."'";
+        header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      $sql = "UPDATE `food`
+              SET `name` = '".$foodName."', `price` = '".$price."', `imageURL` = '".$imageURL."',
+                  `description` = '".$description."'
+              WHERE restaurantID = ".$editRestaurantID." AND foodID = ".$editFoodID.";";
       mysqli_set_charset($link, "utf8");
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
-        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+        header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       }
       mysqli_close($link);
-      header("Location: member.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: food.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isDelete = isset($_GET["delete"]);
     if ($isDelete) {
       $memberID = $_GET["delete"];
       // delete code in here
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
-        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+        header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM member WHERE memberID = '".$memberID."'";
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
-        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+        header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      header("Location: member.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: food.php?msg=1".(($isQuery)?"&query=".$_GET["query"]:""));
     }
     $isCreate = isset($_GET["create"]);
     if ($isCreate) {
@@ -78,15 +82,15 @@
       }
       // create code in here;
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
-        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+        header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "INSERT INTO member VALUES(
         NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
-        header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+        header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      header("Location: member.php?msg=2&password=".$password.(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: food.php?msg=2&password=".$password.(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 食物管理頁面</h1>
@@ -141,7 +145,7 @@
       <button type="submit" class="btn btn-primary mb-2 mr-2">查詢</button>
       <?php 
       if ($isQuery) {
-        echo '<button type="reset" class="btn btn-secondary mb-2 mr-2" onClick="document.location=\'member.php\';">取消查詢</button>';
+        echo '<button type="reset" class="btn btn-secondary mb-2 mr-2" onClick="document.location=\'food.php\';">取消查詢</button>';
       } 
     ?>
     </form>
@@ -183,7 +187,8 @@
                       FROM food AS a
                       JOIN restaurant AS b
                       ON a.restaurantID = b.restaurantID
-                      WHERE a.name LIKE '%".$_GET["query"]."%'";
+                      WHERE a.name LIKE '%".$_GET["query"]."%'
+                      ORDER BY a.restaurantID ASC, a.foodID ASC;";
             } else {
               $sql = "SELECT a.restaurantID AS restaurantID,
                              a.foodID AS foodID,
@@ -195,7 +200,8 @@
                              b.tel AS tel
                       FROM food AS a
                       JOIN restaurant AS b
-                      ON a.restaurantID = b.restaurantID";
+                      ON a.restaurantID = b.restaurantID
+                      ORDER BY a.restaurantID ASC, a.foodID ASC;";
             }
             mysqli_set_charset($link, "utf8");
             $result = mysqli_query($link, $sql);
@@ -205,7 +211,7 @@
               $count = 0;
               while($row = mysqli_fetch_assoc($result)) {
                 $count += 1;
-                if ($isEdit && $editRestaurantID == $row["restaurantNameID"] && $editFoodID == $row["foodID"]) {
+                if ($isEdit && $editRestaurantID == $row["restaurantID"] && $editFoodID == $row["foodID"]) {
                   //編輯中
                   echo '<tr>
                     <th class="align-middle text-center" scope="row">'.$count.'</th>
@@ -225,7 +231,7 @@
                       <input name="description" type="text" class="form-control form-control-sm" style="width: 160px;" value="'.$row["description"].'">
                     </td>
                     <td class="align-middle text-center" colspan="2">
-                      <button class="btn btn-success btn-sm btn-block" type="submit" name="update" value="'.$row["memberID"].'">
+                      <button class="btn btn-success btn-sm btn-block" type="submit" name="update" value="'.$row["restaurantID"].','.$row["foodID"].'">
                         送出
                       </button>
                     </td>
@@ -242,12 +248,12 @@
                     <td class="align-middle text-center">'.$row["imageURL"].'</td>
                     <td class="align-middle text-center">'.$row["description"].'</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-warning btn-sm btn-block" type="submit" name="edit" value="['.$row["restaurantID"].','.$row["foodID"].']">
+                      <button class="btn btn-warning btn-sm btn-block" type="submit" name="edit" value="'.$row["restaurantID"].','.$row["foodID"].'">
                         編輯
                       </button>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-danger btn-sm btn-block" type="submit" name="delete" value="['.$row["restaurantID"].','.$row["foodID"].']">
+                      <button class="btn btn-danger btn-sm btn-block" type="submit" name="delete" value="'.$row["restaurantID"].','.$row["foodID"].'">
                         刪除
                       </button>
                     </td>
@@ -261,8 +267,17 @@
             <th class="align-middle text-center" scope="row">+</th>
             <td class="align-middle text-center">
               <select class="form-control form-control-sm" name="restaurantAdd">
-                <option value="1">男</option>
-                <option value="0">女</option>
+                <?php
+                  $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD, "deliverysystem") or die(
+                    "連線失敗!<br>");
+                    $sql = "SELECT restaurantID, `name` FROM restaurant ORDER BY restaurantID ASC;";
+                  mysqli_set_charset($link, "utf8");
+                  $result = mysqli_query($link, $sql);
+                  $count = 0;
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row["restaurantID"].'">'.$row["name"].'</option>';
+                  }
+                ?>
               </select>
             </td>
             <td class="align-middle text-center"></td>
