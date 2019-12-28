@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <title> YuntechEat </title>
     <?php
-    $conn = new mysqli("localhost", "root", "", "deliverysystem") or die("連接失敗");
+    $conn = new mysqli($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD, "deliverysystem") or die("連接失敗");
     ?>
 </head>
 
 <body>
+<?php include("config.php"); ?>
     <h1>YuntechEat 食物管理頁面</h1>
     <label>請選擇食物編號
         <select name="month">

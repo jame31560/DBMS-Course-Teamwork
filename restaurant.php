@@ -16,6 +16,7 @@
 
 <body>
   <div class="container">
+    <?php include("config.php"); ?>
     <?php
     $hasMsg = isset($_GET["msg"]);
     $isQuery = isset($_GET["query"]);
@@ -31,7 +32,7 @@
       $tel = $_GET["tel"];
       $address = $_GET["address"];
       // update code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
       $sql = "UPDATE restaurant SET name = '".$name."' , tel = '".$tel."' , address = '".$address."' WHERE restaurantID = '".$restaurantID."'";
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
@@ -47,7 +48,7 @@
     if ($isDelete) {
       $restaurantID = $_GET["delete"];
       // delete code in here
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM restaurant WHERE restaurantID = '".$restaurantID."'";
       try{
         mysqli_query($link, $sql);
@@ -63,7 +64,7 @@
       $tel = $_GET["telAdd"];
       $address = $_GET["addressAdd"];
       // create code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "INSERT INTO restaurant VALUES(NULL,'".$name."','".$tel."','".$address."')";
       try{
         mysqli_query($link, $sql);
@@ -150,7 +151,7 @@
         </thead>
         <tbody>
           <?php
-            $link = mysqli_connect("localhost","root", "","deliverysystem") or die("連線失敗!<br>");
+            $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die("連線失敗!<br>");
             if ($isQuery) {
               $sql = "SELECT * FROM restaurant WHERE name LIKE '%".$_GET["query"]."%'";
             } else {

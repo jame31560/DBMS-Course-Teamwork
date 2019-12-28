@@ -16,6 +16,7 @@
 
 <body>
   <div class="container">
+    <?php include("config.php"); ?>
     <?php
     $hasMsg = isset($_GET["msg"]);
     $isQuery = isset($_GET["query"]);
@@ -35,8 +36,11 @@
       $email = $_GET["email"];
       $birthday = $_GET["birthday"];  
       // update code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
-      $sql = "UPDATE member SET account = '".$account."' , name = '".$name."' , gender = '".$gender."' , email = '".$email."' , birthday = '".$birthday."' WHERE memberID = '".$memberID."'";
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      $sql = "UPDATE member SET account = '".$account."
+        ' , name = '".$name."' , gender = '".$gender."' , email = '".$email."' , birthday = '".$birthday."
+        ' WHERE memberID = '".$memberID."'";
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
       try{
@@ -52,7 +56,8 @@
     if ($isDelete) {
       $memberID = $_GET["delete"];
       // delete code in here
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM member WHERE memberID = '".$memberID."'";
       try{
         mysqli_query($link, $sql);
@@ -79,14 +84,16 @@
         $password .= $word[rand() % $len];
       }
       // create code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
-      $sql = "INSERT INTO member VALUES(NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $sql = "INSERT INTO member VALUES(
+        NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
-      header("Location: member.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: member.php?msg=2&password=".$password.(($isQuery)?"&query=".$_GET["query"]:""));
     }
   ?>
     <h1 class="text-center mt-2">YuntechEat 會員管理頁面</h1>
@@ -108,7 +115,7 @@
               </div>';
             break;
           case 2:
-            $msg = "新增成功";
+            $msg = "新增成功，密碼為".$_GET["password"];
             echo '<div class="alert alert-success" style="width: 100%;" role="alert">
                 '.$msg.'
               </div>';
@@ -168,7 +175,7 @@
         </thead>
         <tbody>
           <?php
-            $link = mysqli_connect("localhost","root", "","deliverysystem") or die("連線失敗!<br>");
+            $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die("連線失敗!<br>");
             if ($isQuery) {
               $sql = "SELECT * FROM member WHERE account LIKE '%".$_GET["query"]."%'";
             } else {
@@ -197,10 +204,10 @@
                       </select>
                     </td>
                     <td class="align-middle text-center">
-                      <input name="birthday" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["birthday"].'">
+                      <input name="birthday" type="date" class="form-control form-control-sm" style="width: 145px;" value="'.$row["birthday"].'">
                     </td>
                     <td class="align-middle text-center">
-                      <input name="email" type="text" class="form-control form-control-sm" style="width: 180px;" value="'.$row["email"].'">
+                      <input name="email" type="email" class="form-control form-control-sm" style="width: 180px;" value="'.$row["email"].'">
                     </td>
                     <td class="align-middle text-center" colspan="2">
                       <button class="btn btn-success btn-sm btn-block" type="submit" name="update" value="'.$row["memberID"].'">
@@ -248,10 +255,10 @@
               </select>
             </td>
             <td class="align-middle text-center">
-              <input name="birthdayAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
+              <input name="birthdayAdd" type="date" class="form-control form-control-sm" style="width: 145px;">
             </td>
             <td class="align-middle text-center">
-              <input name="emailAdd" type="text" class="form-control form-control-sm" style="width: 180px;">
+              <input name="emailAdd" type="email" class="form-control form-control-sm" style="width: 180px;">
             </td>
             <td class="align-middle text-center" colspan="2">
               <button class="btn btn-info btn-sm btn-block" type="submit" name="create">

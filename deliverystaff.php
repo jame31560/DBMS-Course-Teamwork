@@ -16,6 +16,7 @@
 
 <body>
   <div class="container">
+    <?php include("config.php"); ?>
     <?php
     $hasMsg = isset($_GET["msg"]);
     $isQuery = isset($_GET["query"]);
@@ -30,7 +31,7 @@
       $name = $_GET["name"];
       $tel = $_GET["tel"];
       // update code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
       $sql = "UPDATE deliverystaff SET name = '".$name."' , tel = '".$tel."' WHERE deliveryStaffID = '".$deliveryStaffID."'";
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
@@ -47,7 +48,7 @@
     if ($isDelete) {
       $deliveryStaffID = $_GET["delete"];
       // delete code in here
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM deliverystaff WHERE deliveryStaffID = '".$deliveryStaffID."'";
       try{
         mysqli_query($link, $sql);
@@ -62,7 +63,7 @@
       $name = $_GET["nameAdd"];
       $tel = $_GET["telAdd"];
       // create code in here;
-      $link = mysqli_connect("localhost","root", "","deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: deliverystaff.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "INSERT INTO deliverystaff VALUES(NULL,'".$name."','".$tel."')";
       try{
         mysqli_query($link, $sql);
@@ -148,7 +149,7 @@
         </thead>
         <tbody>
           <?php
-            $link = mysqli_connect("localhost","root", "","deliverysystem") or die("連線失敗!<br>");
+            $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die("連線失敗!<br>");
             if ($isQuery) {
               $sql = "SELECT * FROM deliverystaff WHERE name LIKE '%".$_GET["query"]."%'";
             } else {
