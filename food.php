@@ -29,9 +29,9 @@
     }
     $isUpdate = isset($_GET["update"]);
     if ($isUpdate) {
-      $editID = explode(",", $_GET["update"]);
-      $editRestaurantID = (int)$editID[0];
-      $editFoodID = (int)$editID[1];
+      $updateID = explode(",", $_GET["update"]);
+      $updateRestaurantID = (int)$updateID[0];
+      $updateFoodID = (int)$updateID[1];
       $foodName = $_GET["foodName"]; // update this on where
       $price = $_GET["price"];
       $imageURL = $_GET["imageURL"];
@@ -42,7 +42,7 @@
       $sql = "UPDATE `food`
               SET `name` = '".$foodName."', `price` = '".$price."', `imageURL` = '".$imageURL."',
                   `description` = '".$description."'
-              WHERE restaurantID = ".$editRestaurantID." AND foodID = ".$editFoodID.";";
+              WHERE restaurantID = ".$updateRestaurantID." AND foodID = ".$updateFoodID.";";
       mysqli_set_charset($link, "utf8");
       try{
         mysqli_query($link, $sql);
@@ -54,11 +54,13 @@
     }
     $isDelete = isset($_GET["delete"]);
     if ($isDelete) {
-      $memberID = $_GET["delete"];
+      $deleteID = explode(",", $_GET["delete"]);
+      $deleteRestaurantID = (int)$deleteID[0];
+      $deleteFoodID = (int)$deleteID[1];
       // delete code in here
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
         header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
-      $sql = "DELETE FROM member WHERE memberID = '".$memberID."'";
+      $sql = "DELETE FROM food WHERE restaurantID = ".$deleteRestaurantID." AND foodID = ".$deleteFoodID.";";
       try{
         mysqli_query($link, $sql);
       }catch(Exception $e){
@@ -73,13 +75,6 @@
       $gender = $_GET["genderAdd"];
       $email = $_GET["emailAdd"];
       $birthday = $_GET["birthdayAdd"];
-      $password_len = 6;
-      $password = '';
-      $word = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      $len = strlen($word);
-      for ($i = 0; $i < $password_len; $i++) {
-        $password .= $word[rand() % $len];
-      }
       // create code in here;
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
         header("Location: food.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
