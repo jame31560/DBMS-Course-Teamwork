@@ -122,7 +122,7 @@
               </div>';
             break;
           case 2:
-            $msg = "新增成功，密碼為".$_GET["password"];
+            $msg = "新增成功";
             echo '<div class="alert alert-success" style="width: 100%;" role="alert">
                 '.$msg.'
               </div>';

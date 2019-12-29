@@ -17,28 +17,33 @@
 <body>
   <div class="container">
     <?php include("config.php"); ?>
-            $link = mysqli_connect("localhost","root",
     <?php
     $hasMsg = isset($_GET["msg"]);
     $isQuery = isset($_GET["query"]);
-    $isEdit = isset($_GET["edit"]);
+    $isEditDetail = isset($_GET["editDetail"]);
     $isCreate = isset($_GET["create"]);
     $isCheck = isset($_GET["check"]);
-    if ($isEdit) {
-      $editID = $_GET["edit"];
+    if ($isEditDetail) {
+      $editID = $_GET["editDetail"];
+      $editID = explode(",", $_GET["editDetail"]);
+      $editRestaurantID = (int)$editID[0];
+      $editFoodID = (int)$editID[1];
     }
     if ($isCheck) {
       $checkID = $_GET["check"];
     }
-    $isUpdate = isset($_GET["update"]);
-    if ($isUpdate) {
-      $restaurantID = $_GET["update"]; // update this on where
-      $name = $_GET["name"];
-      $tel = $_GET["tel"];
-      $address = $_GET["address"];
+    $isUpdateDetail = isset($_GET["updateDetail"]);
+    if ($isUpdateDetail) {
+      $updateDetailID = $_GET["updateDetail"];
+      $updateDetailID = explode(",", $_GET["updateDetail"]);
+      $updateRestaurantID = (int)$updateDetailID[0];
+      $updateFoodID = (int)$updateDetailID[1];
+      $orderID = $_GET["check"];
+      $foodCount = $_GET["foodCount"];
       // update code in here;
-      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")));
-      $sql = "UPDATE restaurant SET name = '".$name."' , tel = '".$tel."' , address = '".$address."' WHERE restaurantID = '".$restaurantID."'";
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:"")));
+      $sql = "UPDATE orderdetail SET foodCount = '".$foodCount."' WHERE restaurantID = '".$updateRestaurantID."' AND orderID = '".$orderID."' and foodID = '".$updateFoodID."';";
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
       try{
@@ -46,10 +51,10 @@
           throw new Exception("Error Processing Request", 1);
         }
       }catch(Exception $e){
-        header("Location: order.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+        header("Location: order.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
       }
       mysqli_close($link);
-      header("Location: order.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: order.php?msg=0".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
     }
     $isDeleteOrder = isset($_GET["deleteOrder"]);
     if ($isDeleteOrder) {
@@ -95,7 +100,7 @@
       $deleteFoodID = (int)$deleteID[1];
       // delete code in here
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
-        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"")).(($isCheck)?"&check=".$_GET["check"]:"")); 
+        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""))); 
       try{
         $sql = "DELETE FROM orderdetail WHERE orderID = '".$orderID."' and restaurantID = '".$deleteRestaurantID."' and foodID = '".$deleteFoodID."';";
         if(!mysqli_query($link, $sql)) {
@@ -284,18 +289,32 @@
                       echo '<td class="align-middle text-center">'.$detail["restaurantName"].'</td>';
                       echo '<td class="align-middle text-center">'.$detail["foodName"].'</td>';
                       echo '<td class="align-middle text-center">'.$detail["price"].'</td>';
-                      echo '<td class="align-middle text-center">'.$detail["foodCount"].'</td>';
+                      if ($isEditDetail && $editRestaurantID == $detail["restaurantID"] && $editFoodID == $detail["foodID"]) {
+                        echo '<td class="align-middle text-center">
+                        <input name="foodCount" type="number" class="form-control form-control-sm" style="width: 70px;" min="1" value="'.$detail["foodCount"].'">
+                              </td>';
+                      } else {
+                        echo '<td class="align-middle text-center">'.$detail["foodCount"].'</td>';
+                      }
                       echo '<td class="align-middle text-center">'.$cost.'</td>';
-                      echo '<td class="align-middle text-center">
-                              <button class="btn btn-warning btn-sm btn-block" type="submit" name="editDetail" value="'.$detail["restaurantID"].','.$detail["foodID"].'">
-                                編輯
-                              </button>
-                            </td>';
-                      echo '<td class="align-middle text-center">
-                              <button class="btn btn-danger btn-sm btn-block" type="submit" name="deleteDetail" value="'.$detail["restaurantID"].','.$detail["foodID"].'">
-                                刪除
-                              </button>
-                            </td>';
+                      if ($isEditDetail && $editRestaurantID == $detail["restaurantID"] && $editFoodID == $detail["foodID"]) {
+                        echo '<td class="align-middle text-center" colspan="2">
+                                <button class="btn btn-success btn-sm btn-block" type="submit" name="updateDetail" value="'.$detail["restaurantID"].','.$detail["foodID"].'">
+                                  完成
+                                </button>
+                              </td>';
+                      } else {
+                        echo '<td class="align-middle text-center">
+                                <button class="btn btn-warning btn-sm btn-block" type="submit" name="editDetail" value="'.$detail["restaurantID"].','.$detail["foodID"].'">
+                                  編輯
+                                </button>
+                              </td>';
+                        echo '<td class="align-middle text-center">
+                                <button class="btn btn-danger btn-sm btn-block" type="submit" name="deleteDetail" value="'.$detail["restaurantID"].','.$detail["foodID"].'">
+                                  刪除
+                                </button>
+                              </td>';
+                      }
                       echo '</tr>';
                     }
                     echo '<tr>';
