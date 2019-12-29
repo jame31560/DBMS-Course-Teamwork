@@ -37,7 +37,9 @@
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: restaurant.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       }
@@ -51,7 +53,9 @@
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM restaurant WHERE restaurantID = '".$restaurantID."'";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: restaurant.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
@@ -66,7 +70,9 @@
       $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: restaurant.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "INSERT INTO restaurant VALUES(NULL,'".$name."','".$tel."','".$address."')";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: restaurant.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 

@@ -1,5 +1,5 @@
 <?php
     $SQL_URL = "localhost";
-    $SQL_USERNAME = "test";
-    $SQL_PASSWORD = "test";
+    $SQL_USERNAME = "root";
+    $SQL_PASSWORD = "";
 ?>

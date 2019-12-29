@@ -45,7 +45,9 @@
               WHERE restaurantID = ".$updateRestaurantID." AND foodID = ".$updateFoodID.";";
       mysqli_set_charset($link, "utf8");
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       }
@@ -63,7 +65,9 @@
       mysqli_set_charset($link, "utf8");
       $sql = "DELETE FROM food WHERE restaurantID = ".$deleteRestaurantID." AND foodID = ".$deleteFoodID.";";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
@@ -90,7 +94,9 @@
       $sql = "INSERT INTO food VALUES(
         '".$restaurant."','".$foodID."','".$foodName."','".$price."','".$imageURL."','".$description."');";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: food.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 

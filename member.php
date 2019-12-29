@@ -42,7 +42,9 @@
       // $sql = "SELECT * FROM member";
       mysqli_set_charset($link, "utf8");
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       }
@@ -58,7 +60,9 @@
         header("Location: member.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       $sql = "DELETE FROM member WHERE memberID = '".$memberID."'";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
@@ -84,7 +88,9 @@
       $sql = "INSERT INTO member VALUES(
         NULL,'".$account."','".$password."','".$name."','".$gender."','".$birthday."','".$email."')";
       try{
-        mysqli_query($link, $sql);
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
       }catch(Exception $e){
         header("Location: member.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
       } 
