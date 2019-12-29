@@ -232,7 +232,7 @@
                       <input name="foodName" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["foodName"].'">
                     </td>
                     <td class="align-middle text-center">
-                      <input name="price" type="number" class="form-control form-control-sm" style="width: 70px;" value="'.$row["price"].'">
+                      <input name="price" type="number" class="form-control form-control-sm" style="width: 70px;" min="0" value="'.$row["price"].'">
                     </td>
                     <td class="align-middle text-center">
                       <input name="imageURL" type="text" class="form-control form-control-sm" style="width: 120px;" value="'.$row["imageURL"].'">
@@ -296,7 +296,7 @@
               <input name="foodNameAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
             </td>
             <td class="align-middle text-center">
-              <input name="priceAdd" type="number" class="form-control form-control-sm" style="width: 70px;">
+              <input name="priceAdd" type="number" class="form-control form-control-sm" min="0" style="width: 70px;">
             </td>
             <td class="align-middle text-center">
               <input name="imageURLAdd" type="text" class="form-control form-control-sm" style="width: 120px;">
@@ -314,6 +314,9 @@
       </table>
     </form>
     <hr>
+    <form action="index.html" method="post" class="text-center">
+      <button type="submit" class="btn btn-dark btn-lg">回主選單</button>
+    </form>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
             integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">

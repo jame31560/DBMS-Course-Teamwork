@@ -146,14 +146,12 @@
       <table class="table table-striped table-hover table-sm">
         <thead>
           <tr>
-            <th class="align-middle text-center" scope="col">#</th>
-            <th class="align-middle text-center" scope="col">餐廳名稱</th>
-            <th class="align-middle text-center" scope="col">餐廳電話</th>
             <th class="align-middle text-center" scope="col">編號</th>
             <th class="align-middle text-center" scope="col">名稱</th>
-            <th class="align-middle text-center" scope="col">價格</th>
-            <th class="align-middle text-center" scope="col">圖片網址</th>
-            <th class="align-middle text-center" scope="col">敘述</th>
+            <th class="align-middle text-center" scope="col">電話</th>
+            <th class="align-middle text-center" scope="col">地址</th>
+            <th class="align-middle text-center" scope="col">編輯</th>
+            <th class="align-middle text-center" scope="col">刪除</th>
           </tr>
         </thead>
         <tbody>
@@ -233,6 +231,9 @@
       </table>
     </form>
     <hr>
+    <form action="index.html" method="post" class="text-center">
+      <button type="submit" class="btn btn-dark btn-lg">回主選單</button>
+    </form>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
             integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
