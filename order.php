@@ -12,6 +12,18 @@
     font-family: 'Noto Sans TC', sans-serif;
   }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $('#myDropDown').change(function() {
+      //Selected value
+      var inputValue = $(this).val();
+      document.location.href = "order.php?rest=" + inputValue + "<?php
+        echo ((isset($_GET["query"]))?"&query=".$_GET["query"]:"").((isset($_GET["check"]))?"&check=".$_GET["check"]:"") 
+      ?>";
+    });
+  });
+  </script>
 </head>
 
 <body>
@@ -21,7 +33,6 @@
     $hasMsg = isset($_GET["msg"]);
     $isQuery = isset($_GET["query"]);
     $isEditDetail = isset($_GET["editDetail"]);
-    $isCreate = isset($_GET["create"]);
     $isCheck = isset($_GET["check"]);
     if ($isEditDetail) {
       $editID = $_GET["editDetail"];
@@ -60,7 +71,8 @@
     if ($isDeleteOrder) {
       $orderID = $_GET["deleteOrder"];
       // delete code in here
-      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
       try{
         $sql = "DELETE FROM orderdetail WHERE orderID = '".$orderID."';";
         if(!mysqli_query($link, $sql)) {
@@ -77,20 +89,41 @@
     }
     $isCreate = isset($_GET["create"]);
     if ($isCreate) {
-      $name = $_GET["nameAdd"];
-      $tel = $_GET["telAdd"];
-      $address = $_GET["addressAdd"];
+      $member = $_GET["memberAdd"];
+      $staff = $_GET["staffAdd"];
       // create code in here;
-      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:""))); 
-      $sql = "INSERT INTO restaurant VALUES(NULL,'".$name."','".$tel."','".$address."')";
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""))); 
+      $sql = "INSERT INTO `orderhistory` (`memberID`, `deliveryStaffID`) VALUES ('".$member."','".$staff."');";
+      echo $sql;
       try{
         if(!mysqli_query($link, $sql)) {
           throw new Exception("Error Processing Request", 1);
         }
       }catch(Exception $e){
-        header("Location: order.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:""));
+        header("Location: order.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
       } 
-      header("Location: order.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:""));
+      header("Location: order.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
+    }
+    $isAddDetail = isset($_GET["addDetail"]);
+    if ($isAddDetail) {
+      $addRestaurantID = $_GET["detailAddRest"];
+      $addFoodID = $_GET["detailAddFood"];
+      $addFoodCount = $_GET["detailAddFoodCount"];
+      $addOrderID = $_GET["check"];
+      // create code in here;
+      $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD,"deliverysystem") or die(
+        header("Location: order.php?msg=-2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""))); 
+      $sql = "INSERT INTO `orderdetail` (`orderID`, `restaurantID`, `foodID`, `foodCount`) VALUES ('".$addOrderID."','".$addRestaurantID."','".$addFoodID."','".$addFoodCount."');";
+      echo $sql;
+      try{
+        if(!mysqli_query($link, $sql)) {
+          throw new Exception("Error Processing Request", 1);
+        }
+      }catch(Exception $e){
+        header("Location: order.php?msg=-1".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
+      } 
+      header("Location: order.php?msg=2".(($isQuery)?"&query=".$_GET["query"]:"").(($isCheck)?"&check=".$_GET["check"]:""));
     }
     $isDeleteDetail = isset($_GET["deleteDetail"]);
     if ($isDeleteDetail) {
@@ -183,7 +216,7 @@
         <thead>
           <tr>
             <th class="align-middle text-center" scope="col">訂單編號</th>
-            <th class="align-middle text-center" scope="col">會員帳號</th>
+            <th class="align-middle text-center" scope="col">會員姓名</th>
             <th class="align-middle text-center" scope="col">外送員姓名</th>
             <th class="align-middle text-center" scope="col">成立時間</th>
             <th class="align-middle text-center" scope="col">抵達</th>
@@ -234,7 +267,7 @@
                     <td class="align-middle text-center">'.$row["memberName"].'</td>
                     <td class="align-middle text-center">'.$row["staffName"].'</td>
                     <td class="align-middle text-center">'.$row["creationDatetime"].'</td>
-                    <td class="align-middle text-center">'.(($row["arrived"] == 0)?"已送達":"未送達").'</td>
+                    <td class="align-middle text-center">'.(($row["arrived"] == 0)?"未送達":"已送達").'</td>
                     <td class="align-middle text-center" style="
                         border-right-style: dashed;
                       ">
@@ -278,10 +311,10 @@
                           WHERE a.orderID = ".$row["orderID"]."
                           ORDER BY a.restaurantID ASC, a.foodID ASC";
                   $detailResult = mysqli_query($link, $sql);
+                  $total = 0;
                   if (mysqli_num_rows($detailResult) == 0) {
                     echo '<td class="align-middle text-center" colspan="6">無訂購餐點</td>';
                   } else {
-                    $total = 0;
                     while($detail = mysqli_fetch_assoc($detailResult)) {
                       $cost = (int)$detail["price"] * (int)$detail["foodCount"];
                       $total += $cost;
@@ -317,13 +350,46 @@
                       }
                       echo '</tr>';
                     }
-                    echo '<tr>';
-                    echo '<th class="align-middle text-center">總計</th>';
-                    echo '<th class="align-middle text-center" colspan="3"></th>';
-                    echo '<th class="align-middle text-center">'.$total.'</th>';
-                    echo '<th class="align-middle text-center" colspan="2"></th>';
-                    echo '</tr>';
                   }
+                  echo '<tr>';
+                  echo '<td class="align-middle text-center">';
+                  echo '<select class="form-control form-control-sm" name="detailAddRest" id="myDropDown">';
+                  $sql = "SELECT restaurantID, `name` FROM restaurant ORDER BY restaurantID ASC;";
+                  $linkrest = mysqli_query($link, $sql);
+                  $count = 0;
+                  $default = -1;
+                  while($restList = mysqli_fetch_assoc($linkrest)) {
+                    if ($default == -1) {
+                      $default = $restList["restaurantID"];
+                    }
+                    echo '<option value="'.$restList["restaurantID"].'" '.((isset($_GET["rest"])&&(int)$_GET["rest"]==$restList["restaurantID"])?"selected":"").'>'.$restList["name"].'</option>';
+                  }
+                  echo '</select>';
+                  echo '</td>';
+                  echo '<td class="align-middle text-center">';
+                  echo '<select class="form-control form-control-sm" name="detailAddFood">';
+                  $sql = "SELECT foodID, `name` FROM food WHERE restaurantID = ".((isset($_GET["rest"]))?$_GET["rest"]:$default)." ORDER BY foodID ASC;";
+                  echo $sql;
+                  $linkrest = mysqli_query($link, $sql);
+                  $count = 0;
+                  while($restList = mysqli_fetch_assoc($linkrest)) {
+                    echo '<option value="'.$restList["foodID"].'">'.$restList["name"].'</option>';
+                  }
+                  echo '</select>';
+                  echo '</td>';
+                  echo '<td class="align-middle text-center"></td>';
+                  echo '<td class="align-middle text-center"><input name="detailAddFoodCount" type="number" class="form-control form-control-sm" style="width: 70px;" min="1" value="1"></td>';
+                  echo '<td class="align-middle text-center"></td>';
+                  echo '<td class="align-middle text-center" colspan="2"><button class="btn btn-info btn-sm btn-block" type="submit" name="addDetail" value="'.$row["orderID"].'">
+                      新增
+                      </button></td>';
+                  echo '</tr>';
+                  echo '<tr>';
+                  echo '<th class="align-middle text-center">總計</th>';
+                  echo '<th class="align-middle text-center" colspan="3"></th>';
+                  echo '<th class="align-middle text-center">'.$total.'</th>';
+                  echo '<th class="align-middle text-center" colspan="2"></th>';
+                  echo '</tr>';
                   
                   echo '    </tbody>
                             </table>  </div>  
@@ -343,9 +409,9 @@
                     <td class="align-middle text-center">'.$row["memberName"].'</td>
                     <td class="align-middle text-center">'.$row["staffName"].'</td>
                     <td class="align-middle text-center">'.$row["creationDatetime"].'</td>
-                    <td class="align-middle text-center">'.(($row["arrived"] == 0)?"已送達":"未送達").'</td>
+                    <td class="align-middle text-center">'.(($row["arrived"] == 0)?"未送達":"已送達").'</td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-info btn-sm btn-block" type="submit" name="check" value="'.$row["orderID"].'">
+                      <button class="btn btn-secondary btn-sm btn-block" type="submit" name="check" value="'.$row["orderID"].'">
                         詳細資料
                       </button>
                     </td>
@@ -358,15 +424,33 @@
             <!-- 新增欄位 -->
             <th class="align-middle text-center" scope="row">+</th>
             <td class="align-middle text-center">
-              <select class="form-control form-control-sm" name="genderAdd">
-                <option value="1">男</option>
-                <option value="0">女</option>
+              <select class="form-control form-control-sm" name="memberAdd">
+                <?php
+                  $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD, "deliverysystem") or die(
+                    "連線失敗!<br>");
+                    $sql = "SELECT memberID, `name` FROM member ORDER BY memberID ASC;";
+                  mysqli_set_charset($link, "utf8");
+                  $result = mysqli_query($link, $sql);
+                  $count = 0;
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row["memberID"].'">'.$row["name"].'</option>';
+                  }
+                ?>
               </select>
             </td>
             <td class="align-middle text-center">
-              <select class="form-control form-control-sm" name="genderAdd">
-                <option value="1">男</option>
-                <option value="0">女</option>
+              <select class="form-control form-control-sm" name="staffAdd">
+                <?php
+                  $link = mysqli_connect($SQL_URL, $SQL_USERNAME, $SQL_PASSWORD, "deliverysystem") or die(
+                    "連線失敗!<br>");
+                    $sql = "SELECT deliverystaffID, `name` FROM deliverystaff ORDER BY deliverystaffID ASC;";
+                  mysqli_set_charset($link, "utf8");
+                  $result = mysqli_query($link, $sql);
+                  $count = 0;
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row["deliverystaffID"].'">'.$row["name"].'</option>';
+                  }
+                ?>
               </select>
             </td>
             <td class="align-middle text-center"></td>
