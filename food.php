@@ -314,7 +314,7 @@
       </table>
     </form>
     <hr>
-    <form action="index.html" method="post" class="text-center">
+    <form action="index.html" method="get" class="text-center">
       <button type="submit" class="btn btn-dark btn-lg">回主選單</button>
     </form>
 
